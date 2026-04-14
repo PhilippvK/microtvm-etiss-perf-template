@@ -241,6 +241,21 @@ class Handler(server.ProjectAPIHandler):
                     type="str",
                     help="Path to support directory",
                 ),
+                server.ProjectOption(
+                    "perf_uarch",
+                    optional=["generate_project"],
+                    default="CV32E40P",
+                    type="str",
+                    help="Name of uarch.",
+                ),
+                # Only required for tracing...
+                # server.ProjectOption(
+                #     "perf_monitor",
+                #     optional=["generate_project"],
+                #     default="InstructionTrace_RV32",
+                #     type="str",
+                #     help="Name of monitor.",
+                # ),
             ],
         )
 
@@ -273,6 +288,7 @@ class Handler(server.ProjectAPIHandler):
         cpu_arch: str = None,
         instr_trace: bool = None,
         mem_trace: bool = None,
+        perf_uarch: str = None,
         # TODO: gdbserver
     ):
         """Generate etiss.ini file from template."""
@@ -294,6 +310,11 @@ class Handler(server.ProjectAPIHandler):
                     ini_f.write("[Plugin PrintInstruction]\n")
                     # ini_f.write("plugin.printinstruction.print_to_file=true\n")
                     ini_f.write("plugin.printinstruction.print_to_file=true\n")
+                if perf_uarch:
+                    ini_f.write("[Plugin PerformanceEstimatorPlugin]\n")
+                    # ini_f.write("plugin.printinstruction.print_to_file=true\n")
+                    ini_f.write(f"plugin.perfEst.uArch={perf_uarch}\n")
+                    ini_f.write(f"plugin.perfEst.print=0\n")
 
     def generate_project(self, model_library_format_path, standalone_crt_dir, project_dir, options):
         # Make project directory.
@@ -376,6 +397,7 @@ class Handler(server.ProjectAPIHandler):
             cpu_arch=options.get("cpu_arch", default_cpu_arch),
             instr_trace=instr_trace,
             mem_trace=mem_trace,
+            perf_arch=options.get("perf_uarch", "CV32E40P"),
         )
 
     def build(self, options):
