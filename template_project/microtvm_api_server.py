@@ -244,7 +244,7 @@ class Handler(server.ProjectAPIHandler):
                 server.ProjectOption(
                     "perf_uarch",
                     optional=["generate_project"],
-                    default="CV32E40P",
+                    default=None,
                     type="str",
                     help="Name of uarch.",
                 ),
@@ -397,7 +397,7 @@ class Handler(server.ProjectAPIHandler):
             cpu_arch=options.get("cpu_arch", default_cpu_arch),
             instr_trace=instr_trace,
             mem_trace=mem_trace,
-            perf_arch=options.get("perf_uarch", "CV32E40P"),
+            perf_uarch=options.get("perf_uarch", "CV32E40P"),
         )
 
     def build(self, options):
